@@ -1,41 +1,53 @@
 import arcade
+import os
 
 import background
 import rocket
 
 class Game(arcade.Window):
     def __init__(self):
-        super().__init__(800, 600, "Attack of the Zorps",
+        super().__init__(1200, 750, "Attack of the Zorps",
             resizable=True)
         arcade.set_background_color(arcade.color.BLACK)
         
         self.objects = arcade.SpriteList()
         self.stars = arcade.SpriteList()
         
-        self.player = rocket.Rocket(self, "./Assets/player.png")
+        self.camera_offset = 2
         
+        self.player = rocket.Rocket(self, "./Assets/player.png")
         self.objects.append(self.player)
+        
+        for _ in range(1000):
+            self.stars.append(background.Star(self))
 
     def setup(self):
         pass
 
     def on_draw(self):
         self.clear()
+        self.stars.draw()
         self.objects.draw()
 
     def on_update(self, delta_time):
         self.objects.update()
-        pass
+        self.stars.update()
 
     def on_key_press(self, key, modifiers):
         if key in [arcade.key.UP, arcade.key.W]:
             self.player.moving = True
-        pass
+        if key in [arcade.key.RIGHT, arcade.key.D]:
+            self.player.steering_right = True
+        if key in [arcade.key.LEFT, arcade.key.A]:
+            self.player.steering_left = True
 
     def on_key_release(self, key, modifiers):
         if key in [arcade.key.UP, arcade.key.W]:
             self.player.moving = False
-        pass
+        if key in [arcade.key.RIGHT, arcade.key.D]:
+            self.player.steering_right = False
+        if key in [arcade.key.LEFT, arcade.key.A]:
+            self.player.steering_left = False
     
     def on_mouse_motion(self, x, y, dx, dy):
         pass

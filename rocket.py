@@ -20,7 +20,6 @@ class Rocket(arcade.Sprite):
         self.steering_right = False
         self.steering_left = False
     
-    
     def move(self, speed):
         rad = math.radians(self.dir)
         self.speed_x += math.sin(rad) * speed
@@ -44,23 +43,31 @@ class Rocket(arcade.Sprite):
         self.y += self.speed_y
         self.dir += self.speed_dir
         
-        drift = 0.95
+        drift = 0.99
         self.speed_x *= drift
         self.speed_y *= drift
         self.speed_dir *= drift
         
         if self.moving:
-            self.move(0.5)
+            self.move(0.1)
         if self.steering_right:
-            self.speed_dir += 0.1
-            self.move(0.1)
+            self.speed_dir += 0.02
+            self.move(0.03)
         if self.steering_left:
-            self.speed_dir -= 0.1
-            self.move(0.1)
+            self.speed_dir -= 0.02
+            self.move(0.03)
         
         self.dir %= 360
             
         return super().update(delta_time, *args, **kwargs)
+
+class Player(Rocket):
+    def __init__(self, game):
+        super().__init__(game, "./Assets/player.png")
+        self.dir = 0
+        self.speed_x = -2
+        self.speed_y = 2
+        self.speed_dir = -0.5
 
 class Alien(Rocket):
     def __init__(self, game, x, y):

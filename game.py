@@ -4,7 +4,7 @@ import random
 
 import background
 import rocket
-import rocks
+import planets
 import effects
 
 class Game(arcade.Window):
@@ -13,39 +13,48 @@ class Game(arcade.Window):
             resizable=True)
         arcade.set_background_color(arcade.color.BLACK)
         
-        self.objects = arcade.SpriteList()
+        self.planets = arcade.SpriteList()
+        self.rocks = arcade.SpriteList()
+        self.aliens = arcade.SpriteList()
         self.stars = arcade.SpriteList()
+        self.players = arcade.SpriteList()
         
         self.camera_offset = 2
         
-        self.objects.append(rocks.Planet(self))
+        self.planets.append(
+            planets.Earth(self)
+        )
+        self.planets.append(
+            planets.Alien_Planet(self)
+        )
         
-        self.player = rocket.Rocket(self, "./Assets/player.png")
-        self.objects.append(self.player)
-        
-        for _ in range(4):
-            self.objects.append(
-                rocket.Alien(
-                    self,
-                    random.randint(-100, 100),
-                    random.randint(-100, 100)
-                )
-            )
+        self.player = rocket.Player(self)
+        self.players.append(self.player)
         
         for _ in range(1000):
             self.stars.append(background.Star(self))
+        
+        self.frame = 0
 
     def setup(self):
         pass
 
     def on_draw(self):
+        background.draw_grid(self)
         self.clear()
         self.stars.draw()
-        self.objects.draw()
+        self.aliens.draw()
+        self.rocks.draw()
+        self.planets.draw()
+        self.players.draw()
 
     def on_update(self, delta_time):
-        self.objects.update()
+        self.rocks.update()
+        self.planets.update()
+        self.aliens.update()
         self.stars.update()
+        self.players.update()
+        self.frame += 1
 
     def on_key_press(self, key, modifiers):
         if key in [arcade.key.UP, arcade.key.W]:

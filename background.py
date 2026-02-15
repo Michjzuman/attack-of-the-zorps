@@ -39,6 +39,8 @@ class Star(arcade.Sprite):
         
         return super().update(delta_time, *args, **kwargs)
 
+def draw_grid(game):
+    return
 
 if __name__ == "__main__":
     import game

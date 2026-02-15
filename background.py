@@ -9,7 +9,13 @@ class Star(arcade.Sprite):
             weights = [200, 50, 20, 1]
         )[0]
         self.distance = random.random()
-        super().__init__(f"./Assets/star{self.type}.png")
+        image = [
+            "./Assets/star1.png",
+            "./Assets/star2.png",
+            "./Assets/star3.png",
+            "./Assets/star4.png"
+        ][self.type - 1]
+        super().__init__(image)
         self.scale = 0.15
         self.game = game
         

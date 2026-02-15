@@ -1,5 +1,6 @@
 import arcade
 import math
+import random
 
 class Rocket(arcade.Sprite):
     def __init__(self, game, image):
@@ -19,41 +20,60 @@ class Rocket(arcade.Sprite):
         self.steering_right = False
         self.steering_left = False
     
+    
+    def move(self, speed):
+        rad = math.radians(self.dir)
+        self.speed_x += math.sin(rad) * speed
+        self.speed_y += math.cos(rad) * speed
+    
     def update(self, delta_time = 1 / 60, *args, **kwargs):
-        camera_offset_x = self.speed_x * self.game.camera_offset
-        camera_offset_y = self.speed_y * self.game.camera_offset
+        camera_offset_x = self.game.player.speed_x * self.game.camera_offset
+        camera_offset_y = self.game.player.speed_y * self.game.camera_offset
         
-        self.center_x = self.game.width / 2 - camera_offset_x
-        self.center_y = self.game.height / 2 - camera_offset_y
+        self.center_x = (
+            self.game.width / 2 - camera_offset_x -
+            self.game.player.x + self.x
+        )
+        self.center_y = (
+            self.game.height / 2 - camera_offset_y -
+            self.game.player.y + self.y
+        )
         self.angle = self.dir
         
         self.x += self.speed_x
         self.y += self.speed_y
         self.dir += self.speed_dir
         
-        drift = 0.99
+        drift = 0.95
         self.speed_x *= drift
         self.speed_y *= drift
         self.speed_dir *= drift
         
-        def move(speed):
-            rad = math.radians(self.dir)
-            self.speed_x += math.sin(rad) * speed
-            self.speed_y += math.cos(rad) * speed
-        
         if self.moving:
-            move(0.5)
-        if self.steering_right and not self.steering_left:
-            self.speed_dir += 0.05
-            move(0.5)
-        elif self.steering_left:
-            self.speed_dir -= 0.05
-            move(0.2)
+            self.move(0.5)
+        if self.steering_right:
+            self.speed_dir += 0.1
+            self.move(0.1)
+        if self.steering_left:
+            self.speed_dir -= 0.1
+            self.move(0.1)
         
         self.dir %= 360
             
         return super().update(delta_time, *args, **kwargs)
 
+class Alien(Rocket):
+    def __init__(self, game, x, y):
+        self.type = random.randint(1, 3)
+        image = [
+            "./Assets/alien1.png",
+            "./Assets/alien2.png",
+            "./Assets/alien3.png"
+        ][self.type - 1]
+        super().__init__(game, image)
+        self.x = x
+        self.y = y
+        self.dir = random.random() * 360
 
 if __name__ == "__main__":
     import game

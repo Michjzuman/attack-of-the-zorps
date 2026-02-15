@@ -1,8 +1,11 @@
 import arcade
 import os
+import random
 
 import background
 import rocket
+import rocks
+import effects
 
 class Game(arcade.Window):
     def __init__(self):
@@ -15,8 +18,19 @@ class Game(arcade.Window):
         
         self.camera_offset = 2
         
+        self.objects.append(rocks.Planet(self))
+        
         self.player = rocket.Rocket(self, "./Assets/player.png")
         self.objects.append(self.player)
+        
+        for _ in range(4):
+            self.objects.append(
+                rocket.Alien(
+                    self,
+                    random.randint(-100, 100),
+                    random.randint(-100, 100)
+                )
+            )
         
         for _ in range(1000):
             self.stars.append(background.Star(self))
@@ -28,6 +42,7 @@ class Game(arcade.Window):
         self.clear()
         self.stars.draw()
         self.objects.draw()
+        effects.draw_speed_lines(self)
 
     def on_update(self, delta_time):
         self.objects.update()

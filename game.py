@@ -42,7 +42,6 @@ class Game(arcade.Window):
         self.clear()
         self.stars.draw()
         self.objects.draw()
-        effects.draw_speed_lines(self)
 
     def on_update(self, delta_time):
         self.objects.update()

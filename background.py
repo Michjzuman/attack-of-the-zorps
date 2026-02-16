@@ -40,22 +40,24 @@ class Star(arcade.Sprite):
         return super().update(delta_time, *args, **kwargs)
 
 def draw_grid(game):
-    l = 10000
-    lines = 100
-    color = (10, 20, 10)
+    l = 3000
+    line_width = 5
+    outer_line_width = 10
+    a = 10
+    color = (a, a, a)
     
+    lines = round(l / 100)
     start_x = (
         game.width / 2 - l / 2 - game.player.x -
         (game.player.speed_x * game.camera_offset)
     )
-    
     start_y = (
         game.height / 2 - l / 2 - game.player.y -
         (game.player.speed_y * game.camera_offset)
     )
     
     arcade.draw_lbwh_rectangle_outline(
-        start_x, start_y, l, l, color, 10
+        start_x, start_y, l, l, color, outer_line_width
     )
     
     for i in range(lines):
@@ -65,14 +67,14 @@ def draw_grid(game):
             arcade.draw_line(
                 x, y,
                 x, y + l,
-                color, 3
+                color, line_width
             )
             x = start_x
             y = start_y + i * (l / lines)
             arcade.draw_line(
                 x, y,
                 x + l, y,
-                color, 3
+                color, line_width
             )
 
 if __name__ == "__main__":

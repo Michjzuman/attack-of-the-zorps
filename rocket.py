@@ -20,6 +20,12 @@ class Rocket(arcade.Sprite):
         self.steering_right = False
         self.steering_left = False
     
+    @property
+    def speed(self):
+        return math.sqrt(
+            self.speed_x ** 2 + self.speed_y ** 2
+        )
+    
     def move(self, speed):
         rad = math.radians(self.dir)
         self.speed_x += math.sin(rad) * speed

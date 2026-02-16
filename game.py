@@ -1,4 +1,5 @@
 import arcade
+from arcade.types import Color
 import os
 import random
 

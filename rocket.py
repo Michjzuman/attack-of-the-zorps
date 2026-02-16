@@ -64,6 +64,8 @@ class Rocket(arcade.Sprite):
 class Player(Rocket):
     def __init__(self, game):
         super().__init__(game, "./Assets/player.png")
+        self.x = 100
+        self.y = -100
         self.dir = 0
         self.speed_x = -2
         self.speed_y = 2

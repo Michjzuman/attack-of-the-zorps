@@ -31,7 +31,7 @@ class Game(arcade.Window):
         self.player = rocket.Player(self)
         self.players.append(self.player)
         
-        for _ in range(1000):
+        for _ in range(1400):
             self.stars.append(background.Star(self))
         
         self.frame = 0
@@ -40,8 +40,8 @@ class Game(arcade.Window):
         pass
 
     def on_draw(self):
-        background.draw_grid(self)
         self.clear()
+        background.draw_grid(self)
         self.stars.draw()
         self.aliens.draw()
         self.rocks.draw()

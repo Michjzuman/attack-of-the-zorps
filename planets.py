@@ -2,10 +2,14 @@ import arcade
 import random
 import math
 import rocket
+from arcade.hitbox import PymunkHitBoxAlgorithm
+
+
+PRECISE_HIT_BOX = PymunkHitBoxAlgorithm(detail=1.0)
 
 class Planet(arcade.Sprite):
     def __init__(self, game, image):
-        super().__init__(image)
+        super().__init__(image, hit_box_algorithm=PRECISE_HIT_BOX)
         self.scale = 0.15
         self.game = game
         
@@ -13,19 +17,25 @@ class Planet(arcade.Sprite):
         self.y = 0
         self.dir = 0
         
-        self.speed_x = 0
-        self.speed_y = 0
+        self.move_x = 0
+        self.move_y = 0
         self.speed_dir = 0
         
         self.pop_effect = 0
         
         self.spawner = False
         self.spawn_function = None
-    
-    def update(self, delta_time = 1 / 60, *args, **kwargs):
-        camera_offset_x = self.game.player.speed_x * self.game.camera_offset
-        camera_offset_y = self.game.player.speed_y * self.game.camera_offset
-        
+
+        self.mass = 9999
+        self.collision_radius = max(self.width, self.height) * 0.45
+        self.collision_restitution = 0.75
+        self.collision_friction = 0.6
+        self.collision_static = True
+        self.collision_enabled = True
+
+    def sync_view_position(self):
+        camera_offset_x = self.game.player.move_x * self.game.camera_offset
+        camera_offset_y = self.game.player.move_y * self.game.camera_offset
         self.center_x = (
             self.game.width / 2 - camera_offset_x -
             self.game.player.x + self.x
@@ -35,15 +45,18 @@ class Planet(arcade.Sprite):
             self.game.player.y + self.y
         )
         self.angle = self.dir
-        
-        self.x += self.speed_x
-        self.y += self.speed_y
+    
+    def update(self, delta_time = 1 / 60, *args, **kwargs):
+        self.x += self.move_x
+        self.y += self.move_y
         self.dir += self.speed_dir
         
         self.dir %= 360
         
         if self.spawner and self.spawn_function:
             self.spawn_function()
+
+        self.sync_view_position()
 
 class Earth(Planet):
     def __init__(self, game):
@@ -57,12 +70,17 @@ class Egg(Planet):
         super().__init__(game, "./Assets/egg.png")
         self.x = x
         self.y = y
-        self.speed_x = random.random() * 2 -1
-        self.speed_y = random.random() * 2 -1
+        self.move_x = random.random() * 2 -1
+        self.move_y = random.random() * 2 -1
         self.speed_dir = random.random() * 2 -1
         self.spawner = True
         self.spawn_function = self.spawn
-        self.update()
+        self.mass = 0.9
+        self.collision_radius *= 0.68
+        self.collision_restitution = 0.9
+        self.collision_friction = 0.04
+        self.collision_static = False
+        self.sync_view_position()
     
     def spawn(self):
         return

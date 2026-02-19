@@ -19,18 +19,18 @@ class Star(arcade.Sprite):
         self.scale = 0.15
         self.game = game
         
-        self.x = random.randint(-1400, 1400)
-        self.y = random.randint(-1400, 1400)
+        self.x = random.randint(-2000, 2000)
+        self.y = random.randint(-2000, 2000)
     
     def update(self, delta_time = 1 / 60, *args, **kwargs):
         distance = (8 - (self.type + self.distance)) * 4 + 1
         
         camera_offset_x = (
-            self.game.player.speed_x * self.game.camera_offset +
+            self.game.player.move_x * self.game.camera_offset +
             self.game.player.x / distance
         ) 
         camera_offset_y = (
-            self.game.player.speed_y * self.game.camera_offset +
+            self.game.player.move_y * self.game.camera_offset +
             self.game.player.y / distance
         )
         
@@ -40,20 +40,20 @@ class Star(arcade.Sprite):
         return super().update(delta_time, *args, **kwargs)
 
 def draw_grid(game):
-    l = 3000
+    l = getattr(game, "world_size", 3000)
     line_width = 5
     outer_line_width = 10
-    a = 10
+    a = 20
     color = (a, a, a)
     
     lines = round(l / 100)
     start_x = (
         game.width / 2 - l / 2 - game.player.x -
-        (game.player.speed_x * game.camera_offset)
+        (game.player.move_x * game.camera_offset)
     )
     start_y = (
         game.height / 2 - l / 2 - game.player.y -
-        (game.player.speed_y * game.camera_offset)
+        (game.player.move_y * game.camera_offset)
     )
     
     arcade.draw_lbwh_rectangle_outline(

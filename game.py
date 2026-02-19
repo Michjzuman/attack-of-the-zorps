@@ -7,6 +7,7 @@ import background
 import rocket
 import planets
 import effects
+import physics
 
 class Game(arcade.Window):
     def __init__(self):
@@ -21,6 +22,7 @@ class Game(arcade.Window):
         self.players = arcade.SpriteList()
         
         self.camera_offset = 2
+        self.world_size = 3000
         
         self.planets.append(
             planets.Earth(self)
@@ -32,10 +34,26 @@ class Game(arcade.Window):
         self.player = rocket.Player(self)
         self.players.append(self.player)
         
-        for _ in range(1400):
+        for _ in range(2000):
             self.stars.append(background.Star(self))
         
         self.frame = 0
+        
+        self.physics_engine = physics.WorldPhysicsEngine(
+            self,
+            [
+                self.players,
+                self.aliens,
+                self.rocks,
+            ],
+            world_bounds=(
+                -self.world_size / 2,
+                self.world_size / 2,
+                -self.world_size / 2,
+                self.world_size / 2,
+            ),
+            iterations=4,
+        )
 
     def setup(self):
         pass
@@ -47,14 +65,16 @@ class Game(arcade.Window):
         self.aliens.draw()
         self.rocks.draw()
         self.planets.draw()
+        self.player.draw_motion_trail()
         self.players.draw()
 
     def on_update(self, delta_time):
+        self.players.update()
+        self.aliens.update()
         self.rocks.update()
         self.planets.update()
-        self.aliens.update()
+        self.physics_engine.update()
         self.stars.update()
-        self.players.update()
         self.frame += 1
 
     def on_key_press(self, key, modifiers):

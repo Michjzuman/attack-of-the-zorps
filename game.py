@@ -19,10 +19,11 @@ class Game(arcade.Window):
         self.rocks = arcade.SpriteList()
         self.aliens = arcade.SpriteList()
         self.stars = arcade.SpriteList()
+        self.glows = arcade.SpriteList()
         self.players = arcade.SpriteList()
         
         self.camera_offset = 2
-        self.world_size = 3000
+        self.world_size = 1500
         
         self.planets.append(
             planets.Earth(self)
@@ -34,13 +35,14 @@ class Game(arcade.Window):
         self.player = rocket.Player(self)
         self.players.append(self.player)
         
-        for i in range(20):
+        for i in range(50):
             self.rocks.append(
                 planets.Rock(self)
             )
         
         for _ in range(2000):
             self.stars.append(background.Star(self))
+        self.glows = background.create_default_glows(self)
         
         self.frame = 0
         
@@ -65,6 +67,7 @@ class Game(arcade.Window):
 
     def on_draw(self):
         self.clear()
+        self.glows.draw()
         background.draw_grid(self)
         self.stars.draw()
         self.aliens.draw()
@@ -74,6 +77,7 @@ class Game(arcade.Window):
         self.players.draw()
 
     def on_update(self, delta_time):
+        self.glows.update()
         self.players.update()
         self.aliens.update()
         self.rocks.update()

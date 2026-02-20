@@ -2,6 +2,60 @@ import arcade
 import math
 import random
 
+
+_GLOW_TEXTURE = None
+
+
+def _get_glow_texture():
+    global _GLOW_TEXTURE
+    if _GLOW_TEXTURE is None:
+        # Matches Assets/glow.svg (white center, transparent edge).
+        _GLOW_TEXTURE = arcade.make_soft_circle_texture(
+            1024,
+            (255, 255, 255, 255),
+            center_alpha=220,
+            outer_alpha=0,
+            name="background-glow",
+        )
+    return _GLOW_TEXTURE
+
+
+class BackgroundGlow(arcade.Sprite):
+    def __init__(self, game, x, y, radius, alpha, parallax):
+        super().__init__(_get_glow_texture())
+        self.game = game
+        self.x = x
+        self.y = y
+        self.parallax = max(parallax, 1.0)
+
+        self.scale = (radius * 2) / self.texture.width
+        self.alpha = alpha
+
+    def update(self, delta_time=1 / 60, *args, **kwargs):
+        camera_offset_x = (
+            self.game.player.move_x * self.game.camera_offset +
+            self.game.player.x / self.parallax
+        )
+        camera_offset_y = (
+            self.game.player.move_y * self.game.camera_offset +
+            self.game.player.y / self.parallax
+        )
+
+        self.center_x = self.game.width / 2 - camera_offset_x + self.x
+        self.center_y = self.game.height / 2 - camera_offset_y + self.y
+
+        return super().update(delta_time, *args, **kwargs)
+
+
+def create_default_glows(game):
+    glows = arcade.SpriteList()
+    glows.append(BackgroundGlow(game, 0, 0, radius=900, alpha=60, parallax=14))
+    glows.append(BackgroundGlow(game, -600, 450, radius=520, alpha=45, parallax=9))
+    glows.append(BackgroundGlow(game, 700, -380, radius=650, alpha=40, parallax=11))
+    glows.update()
+    return glows
+
+
 class Star(arcade.Sprite):
     def __init__(self, game):
         self.type = random.choices(

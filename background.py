@@ -97,8 +97,8 @@ def draw_grid(game):
     l = getattr(game, "world_size", 3000)
     line_width = 5
     outer_line_width = 10
-    a = 20
-    color = (a, a, a)
+    a = 255
+    color = (a, a, a, 1)
     
     lines = round(l / 100)
     start_x = (

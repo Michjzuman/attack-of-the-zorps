@@ -23,7 +23,8 @@ class Game(arcade.Window):
         self.players = arcade.SpriteList()
         
         self.camera_offset = 2
-        self.world_size = 1500
+        self.world_size = 10000
+        self.cull_margin = 120
         
         self.planets.append(
             planets.Earth(self)
@@ -35,7 +36,7 @@ class Game(arcade.Window):
         self.player = rocket.Player(self)
         self.players.append(self.player)
         
-        for i in range(50):
+        for i in range(20):
             self.rocks.append(
                 planets.Rock(self)
             )
@@ -61,6 +62,15 @@ class Game(arcade.Window):
             ),
             iterations=4,
         )
+        self._culled_lists = (
+            self.glows,
+            self.stars,
+            self.aliens,
+            self.rocks,
+            self.planets,
+            self.players,
+        )
+        self._update_visibility()
 
     def setup(self):
         pass
@@ -84,7 +94,25 @@ class Game(arcade.Window):
         self.planets.update()
         self.physics_engine.update()
         self.stars.update()
+        self._update_visibility()
         self.frame += 1
+
+    def _update_visibility(self):
+        left = -self.cull_margin
+        right = self.width + self.cull_margin
+        bottom = -self.cull_margin
+        top = self.height + self.cull_margin
+
+        for sprite_list in self._culled_lists:
+            for sprite in sprite_list:
+                half_w = sprite.width * 0.5
+                half_h = sprite.height * 0.5
+                sprite.visible = (
+                    sprite.center_x + half_w >= left
+                    and sprite.center_x - half_w <= right
+                    and sprite.center_y + half_h >= bottom
+                    and sprite.center_y - half_h <= top
+                )
 
     def on_key_press(self, key, modifiers):
         if key in [arcade.key.UP, arcade.key.W]:

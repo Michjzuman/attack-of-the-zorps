@@ -4,7 +4,6 @@ import math
 import rocket
 from arcade.hitbox import PymunkHitBoxAlgorithm
 
-
 PRECISE_HIT_BOX = PymunkHitBoxAlgorithm(detail=1.0)
 
 class Planet(arcade.Sprite):
@@ -86,6 +85,21 @@ class Egg(Planet):
         return
         if random.choice(list(range(100))) == 0:
             self.game.aliens.append(rocket.Alien(self.game, self.x, self.y))
+
+class Rock(Planet):
+    def __init__(self, game):
+        super().__init__(game, f"./Assets/rock{random.randint(1, 3)}.png")
+        self.x = 100
+        self.y = 100
+        self.move_x = random.random() * 2 -1
+        self.move_y = random.random() * 2 -1
+        self.speed_dir = random.random() * 2 -1
+        self.mass = 0.9
+        self.collision_radius *= 0.68
+        self.collision_restitution = 0.9
+        self.collision_friction = 0.04
+        self.collision_static = False
+        self.sync_view_position()
 
 class Alien_Planet(Planet):
     def __init__(self, game):

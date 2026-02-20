@@ -30,9 +30,14 @@ class Game(arcade.Window):
         self.planets.append(
             planets.Alien_Planet(self)
         )
-        
+    
         self.player = rocket.Player(self)
         self.players.append(self.player)
+        
+        for i in range(20):
+            self.rocks.append(
+                planets.Rock(self)
+            )
         
         for _ in range(2000):
             self.stars.append(background.Star(self))
